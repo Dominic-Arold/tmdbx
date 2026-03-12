@@ -8,3 +8,5 @@ wheels/
 
 # Virtual environments
 .venv
+
+data/tmdb_v3_openapi_patched.json

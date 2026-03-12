@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "diskcache>=5.6.3",
     "httpx>=0.28.1",
     "pydantic>=2.12.5",
 ]
@@ -13,3 +14,17 @@ dependencies = [
 dev = [
     "datamodel-code-generator[ruff]>=0.54.1",
 ]
+
+[tool.datamodel-codegen]
+input = "data/tmdb_v3_openapi_patched.json"
+input-file-type = "openapi"
+output = "src/tmdbx/models/generated/v3.py"
+output-model-type = "pydantic_v2.BaseModel"
+target-python-version = "3.12"
+openapi-scopes = ["paths"]
+use-annotated = true
+snake-case-field = true
+reuse-model = true
+collapse-root-models = true
+formatters = ["ruff-format", "ruff-check"]
+field-constraints = true
