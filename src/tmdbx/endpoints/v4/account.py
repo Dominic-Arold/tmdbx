@@ -1,27 +1,12 @@
 from tmdbx.endpoints._def import EndpointDef, HTTPMethod, ParamDef, ParamKind
+from .params import AccountObjectIdDef, PageDef, SortByDef
 
 
 ACCOUNT_LISTS = EndpointDef(
-    id              = "account.lists",
+    id              = "v4.account.lists",
     method          = HTTPMethod.GET,
     path_template   = "/4/account/{account_object_id}/lists",
-    params          = [
-        ParamDef(
-            name        = "account_object_id",
-            kind        = ParamKind.PATH,
-            python_type = "str",
-            required    = True,
-            description = "The v4 account object ID",
-        ),
-        ParamDef(
-            name        = "page",
-            kind        = ParamKind.QUERY,
-            python_type = "int",
-            required    = False,
-            default     = 1,
-            description = "Page number",
-        ),
-    ],
+    params          = [AccountObjectIdDef(), PageDef()],
     response_model  = "AccountListsResponse",
     cacheable       = True,
     cache_key_params = ["account_object_id", "page"],
@@ -29,16 +14,25 @@ ACCOUNT_LISTS = EndpointDef(
 )
 
 ACCOUNT_FAVORITE_MOVIES = EndpointDef(
-    id              = "account.favorite_movies",
+    id              = "v4.account.movie.favorites",
     method          = HTTPMethod.GET,
     path_template   = "/4/account/{account_object_id}/movie/favorites",
-    params          = [
-        ParamDef(name="account_object_id", kind=ParamKind.PATH,  python_type="str", required=True),
-        ParamDef(name="page",              kind=ParamKind.QUERY, python_type="int", required=False, default=1),
-    ],
+    params          = [AccountObjectIdDef(), PageDef(), SortByDef()],
     response_model  = "AccountFavoriteMoviesResponse",
     cacheable       = True,
-    description     = "Get the list of movies a user has favourited.",
+    description     = "Get a users list of favourite movies.",
+)
+
+
+
+ACCOUNT_WATCHLIST_MOVIES = EndpointDef(
+    id = "v4.account.movie.watchlist",
+    method = HTTPMethod.GET,
+    path_template = "/4/account/{account_object_id}/movie/watchlist",
+    params = [AccountObjectIdDef(), PageDef(), SortByDef()],
+    response_model = "AccountWatchlistMoviesResponse",
+    cacheable = True,
+    description = "Get a users movie watchlist.",
 )
 
 # ... ACCOUNT_FAVORITE_TV, ACCOUNT_RATED_MOVIES, ACCOUNT_WATCHLIST_MOVIES, etc.
@@ -47,5 +41,6 @@ ACCOUNT_FAVORITE_MOVIES = EndpointDef(
 ACCOUNT_ENDPOINTS: list[EndpointDef] = [
     ACCOUNT_LISTS,
     ACCOUNT_FAVORITE_MOVIES,
+    ACCOUNT_WATCHLIST_MOVIES
     # ...
 ]
