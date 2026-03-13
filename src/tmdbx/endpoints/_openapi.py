@@ -91,7 +91,7 @@ def _parse_operation(
     method       = HTTPMethod(http_method.upper())
     params       = _parse_parameters(op.get("parameters", []))
     has_body     = _has_request_body(op)
-    cacheable    = False #method == HTTPMethod.GET
+    cacheable    = method == HTTPMethod.GET
 
     # id is a temporary placeholder — the registry builder assigns the final id
     # after resolving collisions across all operations on the same path.
