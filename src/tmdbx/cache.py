@@ -95,3 +95,8 @@ class SyncCacheManager:
             finally:
                 with self._in_flight_lock:
                     self._in_flight.pop(key, None)
+
+    def clear_cache(self) -> None:
+        """Wipe the entire disk cache."""
+        if self._cache:
+            self._cache.clear()
