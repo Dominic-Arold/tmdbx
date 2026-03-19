@@ -2,6 +2,7 @@ from __future__ import annotations
 import json
 import re
 from collections import defaultdict
+from importlib.metadata import requires
 from pathlib import Path
 from tmdbx.endpoints._def import EndpointDef, ParamDef, HTTPMethod, ParamKind
 

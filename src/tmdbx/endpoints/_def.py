@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import Any
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 
 
 class HTTPMethod(str, Enum):
@@ -53,11 +53,9 @@ class EndpointDef(BaseModel):
     description:     str        = ""
     auth_required:   bool       = True
 
-    @field_validator("cache_key_params", mode="before")
-    @classmethod
-    def _default_cache_key(cls, v, info):
-        """Auto-populate cache_key_params for GET endpoints if not set."""
-        if not v and info.data.get("method") == HTTPMethod.GET:
-            params: list[ParamDef] = info.data.get("params", [])
-            return [p.name for p in params if p.required]
-        return v
+    @model_validator(mode="after")
+    def _default_cache_key(self) -> "EndpointDef":
+        """Auto-populate cache_key_params for GET endpoints if not explicitly set."""
+        if not self.cache_key_params and self.method == HTTPMethod.GET:
+            self.cache_key_params = [p.name for p in self.params]
+        return self

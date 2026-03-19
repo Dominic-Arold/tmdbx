@@ -1,1 +1,1 @@
-from .client import AsyncTMDBClient, SyncTMDBClient
+from .client import AsyncTMDB, TMDB

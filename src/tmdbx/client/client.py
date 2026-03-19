@@ -7,12 +7,12 @@ from tmdbx.cache import AsyncCacheManager, SyncCacheManager, build_cache_key
 from tmdbx.models.account import AccountListsResponse
 
 
-class AsyncTMDBClient(TMDBClientBase):
+class AsyncTMDB(TMDBClientBase):
 
     def __init__(self, access_token: str, cache_dir: Path, cache_ttl: float, timeout: float = 10.0):
         super().__init__(access_token)
         self._http  = httpx.AsyncClient(timeout=timeout, headers=self._headers())
-        self._cache = AsyncCacheManager(cache_dir, cache_ttl)
+        self.cache = AsyncCacheManager(cache_dir, cache_ttl)
 
     async def __aenter__(self): return self
     async def __aexit__(self, *_): await self.close()
@@ -48,7 +48,7 @@ class AsyncTMDBClient(TMDBClientBase):
 
         if endpoint.cacheable:
             key = build_cache_key(endpoint, path_params, query_params)
-            raw = await self._cache.get_or_fetch(key, _fetch)
+            raw = await self.cache.get_or_fetch(key, _fetch)
         else:
             raw = await _fetch()
 
@@ -66,19 +66,19 @@ class AsyncTMDBClient(TMDBClientBase):
         return await self.request("v4.list.create", name=name, description=description, **kwargs)
 
 
-class SyncTMDBClient(TMDBClientBase):
+class TMDB(TMDBClientBase):
 
     def __init__(self, access_token: str, cache_dir: Path, cache_ttl: float, timeout: float = 10.0):
         super().__init__(access_token)
         self._http  = httpx.Client(timeout=timeout, headers=self._headers())
-        self._cache = SyncCacheManager(cache_dir, cache_ttl)
+        self.cache = SyncCacheManager(cache_dir, cache_ttl)
 
     def __enter__(self): return self
     def __exit__(self, *_): self.close()
     def close(self): self._http.close()
 
     def request(self, endpoint_id: str, **kwargs: Any) -> BaseModel | dict:
-        """Sync mirror of AsyncTMDBClient.request — identical logic, no await."""
+        """Sync mirror of AsyncTMDB.request — identical logic, no await."""
         endpoint = self._get_endpoint(endpoint_id)
         path_params, query_params, body_params = self._split_params(endpoint, kwargs)
         url    = self._resolve_url(endpoint, path_params)
@@ -96,7 +96,7 @@ class SyncTMDBClient(TMDBClientBase):
 
         if endpoint.cacheable:
             key = build_cache_key(endpoint, path_params, query_params)
-            raw = self._cache.get_or_fetch(key, _fetch)
+            raw = self.cache.get_or_fetch(key, _fetch)
         else:
             raw = _fetch()
 

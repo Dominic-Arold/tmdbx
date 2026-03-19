@@ -17,9 +17,7 @@ class TMDBClientBase:
     def __init__(self, access_token: str):
         self._token = access_token
         # subclasses add self._http (httpx.Client or httpx.AsyncClient)
-        # subclasses add self._cache (SyncCacheManager or AsyncCacheManager)
-
-    # ── Request building ──────────────────────────────────────────────────────
+        # subclasses add self.cache (SyncCacheManager or AsyncCacheManager)
 
     def _resolve_url(self, endpoint: EndpointDef, path_params: dict[str, Any]) -> str:
         path = endpoint.path_template.format(**path_params)
