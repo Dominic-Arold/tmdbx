@@ -71,10 +71,10 @@ class EndpointDef(BaseModel):
                       False → no request model (opt-out)
                       str   → use as-is
     """
-    id:              str
+    id:              str                = ""   # computed, not supplied by caller
     method:          HTTPMethod
     path_template:   str
-    params:          list[ParamDef] = []
+    params:          list[ParamDef]     = []
 
     cacheable:       bool | None        = None
     response_model:  str | bool | None  = None
@@ -86,6 +86,8 @@ class EndpointDef(BaseModel):
 
     @model_validator(mode="after")
     def _auto_derive(self) -> "EndpointDef":
+        self.id = f"{self.path_template}:{self.method.value.lower()}"
+
         if self.cacheable is None:
             self.cacheable = (self.method == HTTPMethod.GET)
 

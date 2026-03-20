@@ -48,11 +48,12 @@ class TMDBClientBase:
         body_params     = {k: v for k, v in kwargs.items() if k not in path_names | query_names}
         return path_params, query_params, body_params
 
-    def _get_endpoint(self, endpoint_id: str) -> EndpointDef:
+    def _get_endpoint(self, path_template: str, method: str) -> EndpointDef:
+        key = f"{path_template}:{method.lower()}"
         try:
-            return ENDPOINT_REGISTRY[endpoint_id]
+            return ENDPOINT_REGISTRY[key]
         except KeyError:
-            raise ValueError(f"Unknown endpoint: {endpoint_id!r}")
+            raise ValueError(f"Unknown endpoint: {key!r}")
 
     def _parse_response(self, endpoint: EndpointDef, raw: dict) -> BaseModel | dict:
         if endpoint.response_model and (cls := MODEL_REGISTRY.get(endpoint.response_model)):

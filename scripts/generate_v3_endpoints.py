@@ -114,19 +114,6 @@ def _group_key(path: str) -> str:
     return "misc"
 
 
-def _endpoint_id(path: str) -> str:
-    """
-    Derive a dot-notation registry id from the path, prefixed with 'v3.'.
-
-    /3/authentication/guest_session/new  →  v3.authentication.guest_session.new
-    /3/movie/{movie_id}/credits          →  v3.movie.credits
-    """
-    segs    = [s for s in path.split("/") if s]
-    version = f"v{segs[0]}" if segs else "v3"
-    rest    = [s for s in segs[1:] if not _PARAM_SEG.match(s)]
-    return ".".join([version, *rest])
-
-
 # ── OAS type mapping ──────────────────────────────────────────────────────────
 
 _OAS_TYPE_MAP: dict[str, str] = {
@@ -198,29 +185,6 @@ def _load_operations(spec: dict) -> list[dict]:
     return ops
 
 
-# ── Collision detection ───────────────────────────────────────────────────────
-
-def _assign_ids(ops: list[dict]) -> list[dict]:
-    """
-    Assign final endpoint IDs.  When multiple HTTP methods share the same
-    path the base id is suffixed with ':<method>' for all of them (including
-    GET), mirroring the existing convention.
-    """
-    by_base: dict[str, list[dict]] = defaultdict(list)
-    for op in ops:
-        op["_base_id"] = _endpoint_id(op["path"])
-        by_base[op["_base_id"]].append(op)
-
-    for base_id, group in by_base.items():
-        if len(group) == 1:
-            group[0]["id"] = base_id
-        else:
-            for op in group:
-                op["id"] = f"{base_id}:{op['method'].lower()}"
-
-    return ops
-
-
 # ── Model-name validation ─────────────────────────────────────────────────────
 
 def _collect_class_names(models_path: Path) -> set[str]:
@@ -262,7 +226,6 @@ def _repr(value: Any) -> str:
 def _render_endpoint(op: dict) -> str:
     lines = [
         "    EndpointDef(",
-        f"        id             = {_repr(op['id'])},",
         f"        method         = HTTPMethod.{op['method']},",
         f"        path_template  = {_repr(op['path'])},",
     ]
@@ -361,7 +324,6 @@ def generate(spec_path: Path, models_path: Path | None, out_dir: Path) -> None:
         )
 
     ops = _load_operations(spec)
-    ops = _assign_ids(ops)
 
     body_methods = {"POST", "PUT", "PATCH"}
 
