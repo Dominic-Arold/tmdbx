@@ -18,12 +18,13 @@ dev = [
 [tool.datamodel-codegen]
 input = "data/tmdb_v3_openapi_patched.json"
 input-file-type = "openapi"
-output = "src/tmdbx/models/generated/v3.py"
+output = "src/tmdbx/models/v3.py"
 output-model-type = "pydantic_v2.BaseModel"
 target-python-version = "3.12"
 openapi-scopes = ["paths"]
 use-annotated = true
 snake-case-field = true
+base-class = "tmdbx.models._base.TMDBModel"
 reuse-model = true
 collapse-root-models = true
 formatters = ["ruff-format", "ruff-check"]

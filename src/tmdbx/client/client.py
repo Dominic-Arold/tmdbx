@@ -4,7 +4,6 @@ from typing import Any
 from pydantic import BaseModel
 from ._base import TMDBClientBase
 from tmdbx.cache import AsyncCacheManager, SyncCacheManager, build_cache_key
-from tmdbx.models.account import AccountListsResponse
 
 
 class AsyncTMDB(TMDBClientBase):
@@ -54,17 +53,6 @@ class AsyncTMDB(TMDBClientBase):
 
         return self._parse_response(endpoint, raw)
 
-    # ── Named convenience wrappers (typed, IDE-friendly) ─────────────────────
-
-    async def account_lists(self, account_object_id: str, *, page: int = 1) -> AccountListsResponse:
-        return await self.request("v4.account.lists", account_object_id=account_object_id, page=page)
-
-    async def list_details(self, list_id: int, *, page: int = 1):
-        return await self.request("v4.list.details", list_id=list_id, page=page)
-
-    async def create_list(self, *, name: str, description: str = "", **kwargs):
-        return await self.request("v4.list.create", name=name, description=description, **kwargs)
-
 
 class TMDB(TMDBClientBase):
 
@@ -101,6 +89,3 @@ class TMDB(TMDBClientBase):
             raw = _fetch()
 
         return self._parse_response(endpoint, raw)
-
-    def account_lists(self, account_object_id: str, *, page: int = 1) -> AccountListsResponse:
-        return self.request("v4.account.lists", account_object_id=account_object_id, page=page)

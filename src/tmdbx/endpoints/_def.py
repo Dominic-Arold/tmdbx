@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import Any
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, model_validator
 
 
 class HTTPMethod(str, Enum):
