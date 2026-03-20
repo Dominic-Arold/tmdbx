@@ -7,9 +7,6 @@ ENDPOINTS: list[EndpointDef] = [
         method          = HTTPMethod.GET,
         path_template   = "/4/account/{account_object_id}/lists",
         params          = [AccountObjectIdDef(), PageDef()],
-        response_model  = "AccountListsGetResponse",
-        cacheable       = True,
-        cache_key_params = ["account_object_id", "page"],
         description     = "Get the custom lists that a user has created.",
     ),
     EndpointDef(
@@ -17,8 +14,6 @@ ENDPOINTS: list[EndpointDef] = [
         method          = HTTPMethod.GET,
         path_template   = "/4/account/{account_object_id}/movie/favorites",
         params          = [AccountObjectIdDef(), PageDef(), LanguageDef(), SortByDef()],
-        response_model  = "AccountMovieFavoritesGetResponse",
-        cacheable       = True,
         description     = "Get a users list of favourite movies.",
     ),
     EndpointDef(
@@ -26,8 +21,6 @@ ENDPOINTS: list[EndpointDef] = [
         method=HTTPMethod.GET,
         path_template="/4/account/{account_object_id}/tv/favorites",
         params=[AccountObjectIdDef(), PageDef(), LanguageDef(), SortByDef()],
-        response_model="AccountTvFavoritesGetResponse",
-        cacheable=True,
         description="Get a users list of favourite TV shows.",
     ),
     EndpointDef(
@@ -35,8 +28,6 @@ ENDPOINTS: list[EndpointDef] = [
         method = HTTPMethod.GET,
         path_template = "/4/account/{account_object_id}/movie/watchlist",
         params = [AccountObjectIdDef(), PageDef(), LanguageDef(), SortByDef()],
-        response_model = "AccountMovieWatchlistGetResponse",
-        cacheable = True,
         description = "Get a users movie watchlist.",
     ),
 ]
