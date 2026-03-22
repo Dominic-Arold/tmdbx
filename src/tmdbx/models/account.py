@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from tmdbx.models._base import TMDBModel
 
-class ListSummary(BaseModel):
+class ListsItem(BaseModel):
     account_object_id:  str
     adult:              bool    = False
     average_rating:     float   = 0.0
@@ -20,7 +20,7 @@ class ListSummary(BaseModel):
     updated_at:         str
 
 
-class PaginatedListGetResponse(TMDBModel):
+class PaginatedList(TMDBModel):
     """Paginated list Response."""
     page:          int
     results:       list
@@ -28,9 +28,9 @@ class PaginatedListGetResponse(TMDBModel):
     total_results: int
 
 
-class AccountListsGetResponse(PaginatedListGetResponse):
+class AccountListsGetResponse(PaginatedList):
     """Paginated list of the user's custom lists."""
-    results:       list[ListSummary]
+    results:       list[ListsItem]
 
 
 class AccountMovieFavoritesItem(BaseModel):
@@ -50,25 +50,26 @@ class AccountMovieFavoritesItem(BaseModel):
     vote_count: int
 
 
-class AccountMovieFavoritesGetResponse(PaginatedListGetResponse):
+class AccountMovieFavoritesGetResponse(PaginatedList):
     results: list[AccountMovieFavoritesItem]
 
+
 class AccountMovieWatchlistItem(BaseModel):
-    adult:             bool      = True
-    backdrop_path:     str 
-    id:                int       = 0
-    title:             str 
+    adult:             bool         = True
+    backdrop_path:     str
+    genre_ids:         list[int]
+    id:                int          = 0
     original_language: str 
     original_title:    str 
-    overview:          str 
-    poster_path:       str 
-    media_type:        str 
-    genre_ids:         list[int]
-    popularity:        float     = 0
-    release_date:      str 
-    video:             bool      = True
-    vote_average:      float     = 0
-    vote_count:        int       = 0
+    overview:          str
+    popularity:        float        = 0
+    poster_path:       str
+    release_date:      str
+    title:             str
+    video:             bool         = True
+    vote_average:      float        = 0
+    vote_count:        int          = 0
 
-class AccountMovieWatchlistGetResponse(PaginatedListGetResponse):
+
+class AccountMovieWatchlistGetResponse(PaginatedList):
     results: list[AccountMovieWatchlistItem]
