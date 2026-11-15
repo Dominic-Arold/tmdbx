@@ -1,1 +1,3 @@
-from .client import AsyncTMDBClient, SyncTMDBClient
+from tmdbx.client.client import TMDB, AsyncTMDB
+
+__all__ = ["TMDB", "AsyncTMDB"]

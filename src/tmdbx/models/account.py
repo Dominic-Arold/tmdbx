@@ -1,7 +1,7 @@
 from pydantic import BaseModel
+from tmdbx.models._base import TMDBModel
 
-
-class ListSummary(BaseModel):
+class ListsItem(BaseModel):
     account_object_id:  str
     adult:              bool    = False
     average_rating:     float   = 0.0
@@ -20,9 +20,56 @@ class ListSummary(BaseModel):
     updated_at:         str
 
 
-class AccountListsResponse(BaseModel):
-    """Paginated list of the user's custom lists."""
+class PaginatedList(TMDBModel):
+    """Paginated list Response."""
     page:          int
-    results:       list[ListSummary]
+    results:       list
     total_pages:   int
     total_results: int
+
+
+class AccountListsGetResponse(PaginatedList):
+    """Paginated list of the user's custom lists."""
+    results:       list[ListsItem]
+
+
+class AccountMovieFavoritesItem(BaseModel):
+    adult: bool
+    backdrop_path: str | None = None
+    genre_ids: list[int]
+    id: int
+    original_language: str
+    original_title: str
+    overview: str
+    popularity: float
+    poster_path: str | None = None
+    release_date: str
+    title: str
+    video: bool
+    vote_average: float
+    vote_count: int
+
+
+class AccountMovieFavoritesGetResponse(PaginatedList):
+    results: list[AccountMovieFavoritesItem]
+
+
+class AccountMovieWatchlistItem(BaseModel):
+    adult:             bool         = True
+    backdrop_path:     str | None   = None
+    genre_ids:         list[int]
+    id:                int          = 0
+    original_language: str
+    original_title:    str
+    overview:          str
+    popularity:        float        = 0
+    poster_path:       str | None   = None
+    release_date:      str
+    title:             str
+    video:             bool         = True
+    vote_average:      float        = 0
+    vote_count:        int          = 0
+
+
+class AccountMovieWatchlistGetResponse(PaginatedList):
+    results: list[AccountMovieWatchlistItem]
