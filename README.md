@@ -1,5 +1,7 @@
 # tmdbx
 
+[![tests](https://github.com/Dominic-Arold/tmdbx/actions/workflows/tests.yml/badge.svg)](https://github.com/Dominic-Arold/tmdbx/actions/workflows/tests.yml)
+
 A typed Python client for [The Movie Database (TMDB)](https://www.themoviedb.org/) API, covering both **v3** and **v4**.
 
 - **Sync and async**: `TMDB` and `AsyncTMDB` share one request-building core and differ only in I/O.
