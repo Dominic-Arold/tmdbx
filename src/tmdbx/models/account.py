@@ -35,14 +35,14 @@ class AccountListsGetResponse(PaginatedList):
 
 class AccountMovieFavoritesItem(BaseModel):
     adult: bool
-    backdrop_path: str
+    backdrop_path: str | None = None
     genre_ids: list[int]
     id: int
     original_language: str
     original_title: str
     overview: str
     popularity: float
-    poster_path: str
+    poster_path: str | None = None
     release_date: str
     title: str
     video: bool
@@ -56,14 +56,14 @@ class AccountMovieFavoritesGetResponse(PaginatedList):
 
 class AccountMovieWatchlistItem(BaseModel):
     adult:             bool         = True
-    backdrop_path:     str
+    backdrop_path:     str | None   = None
     genre_ids:         list[int]
     id:                int          = 0
-    original_language: str 
-    original_title:    str 
+    original_language: str
+    original_title:    str
     overview:          str
     popularity:        float        = 0
-    poster_path:       str
+    poster_path:       str | None   = None
     release_date:      str
     title:             str
     video:             bool         = True

@@ -9,11 +9,16 @@ from tmdbx.endpoints._def import EndpointDef
 def build_cache_key(endpoint: EndpointDef, path_params: dict, query_params: dict) -> str:
     """
     Deterministic string key for a specific endpoint call.
-    E.g. "v4.account.lists:account_object_id=abc123:page=2"
+    E.g. "/4/account/{account_object_id}/lists:get:account_object_id=abc123:page=2"
     """
     parts = [endpoint.id]
     for name in endpoint.cache_key_params:
-        val = path_params.get(name) or query_params.get(name) or endpoint_default(endpoint, name)
+        if name in path_params:
+            val = path_params[name]
+        elif name in query_params:
+            val = query_params[name]
+        else:
+            val = endpoint_default(endpoint, name)
         parts.append(f"{name}={val}")
     return ":".join(parts)
 
@@ -31,8 +36,8 @@ class CacheManagerBase:
     Does not contain any I/O or locking logic — subclasses own get_or_fetch.
     """
 
-    def __init__(self, cache_dir: Path, ttl: float) -> None:
-        self._cache = diskcache.Cache(str(cache_dir))
+    def __init__(self, cache_dir: str | Path, ttl: float) -> None:
+        self._cache = diskcache.Cache(str(Path(cache_dir).expanduser()))
         self._ttl   = ttl
 
     # ── Cache management ──────────────────────────────────────────────────────
@@ -46,12 +51,12 @@ class CacheManagerBase:
         Remove cache entries for a given endpoint, optionally filtered by params.
 
         With no kwargs, all entries for the endpoint are removed:
-            cache.invalidate("v4.account.lists")
+            cache.invalidate("/4/account/{account_object_id}/lists:get")
 
         With kwargs, only entries whose key contains every supplied param=value
         segment are removed:
-            cache.invalidate("v4.account.lists", account_object_id="abc")
-            cache.invalidate("v4.account.lists", account_object_id="abc", page=2)
+            cache.invalidate("/4/account/{account_object_id}/lists:get", account_object_id="abc")
+            cache.invalidate("/4/account/{account_object_id}/lists:get", account_object_id="abc", page=2)
 
         Returns the number of entries deleted.
         """
@@ -82,7 +87,7 @@ class AsyncCacheManager(CacheManagerBase):
     Async disk cache with per-key double-lock pattern.
     """
 
-    def __init__(self, cache_dir: Path, ttl: float) -> None:
+    def __init__(self, cache_dir: str | Path, ttl: float) -> None:
         super().__init__(cache_dir, ttl)
         self._in_flight: dict[str, asyncio.Lock] = {}
         self._in_flight_lock = asyncio.Lock()  # guards _in_flight dict itself
@@ -119,7 +124,7 @@ class SyncCacheManager(CacheManagerBase):
     Uses threading.Lock instead of asyncio.Lock; otherwise mirrors AsyncCacheManager.
     """
 
-    def __init__(self, cache_dir: Path, ttl: float) -> None:
+    def __init__(self, cache_dir: str | Path, ttl: float) -> None:
         super().__init__(cache_dir, ttl)
         self._in_flight: dict[str, threading.Lock] = {}
         self._in_flight_lock = threading.Lock()  # guards _in_flight dict itself

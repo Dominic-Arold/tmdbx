@@ -18,7 +18,10 @@ class TMDBClientBase:
         self._token = access_token
 
     def _resolve_url(self, endpoint: EndpointDef, path_params: dict[str, Any]) -> str:
-        path = endpoint.path_template.format(**path_params)
+        try:
+            path = endpoint.path_template.format(**path_params)
+        except KeyError as e:
+            raise ValueError(f"Missing required path param: {e.args[0]}") from None
         return f"{self.BASE_URL}{path}"
 
     def _resolve_query(self, endpoint: EndpointDef, query_params: dict[str, Any]) -> dict:

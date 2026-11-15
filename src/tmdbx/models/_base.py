@@ -9,7 +9,7 @@ MODEL_REGISTRY: dict[str, type["TMDBModel"]] = {}
 
 # Prefixes/suffixes used to decide which subclasses to register.
 # Hand-authored models (account.py etc.) use plain readable names like
-# "AccountListsResponse" — these are caught by the suffix check alone.
+# "AccountListsGetResponse" — these are caught by the suffix check alone.
 # Generated v3 models use "Field3...Response" / "Field3...Request".
 _REGISTER_SUFFIXES = ("Response", "Request")
 

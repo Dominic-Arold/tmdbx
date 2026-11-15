@@ -8,7 +8,7 @@ from tmdbx.cache import AsyncCacheManager, SyncCacheManager, build_cache_key
 
 class AsyncTMDB(TMDBClientBase):
 
-    def __init__(self, access_token: str, cache_dir: Path, cache_ttl: float, timeout: float = 10.0):
+    def __init__(self, access_token: str, cache_dir: str | Path, cache_ttl: float, timeout: float = 10.0):
         super().__init__(access_token)
         self._http  = httpx.AsyncClient(timeout=timeout, headers=self._headers())
         self.cache = AsyncCacheManager(cache_dir, cache_ttl)
@@ -24,12 +24,14 @@ class AsyncTMDB(TMDBClientBase):
 
     async def request(self, endpoint: str, method: str = "get", **kwargs: Any) -> BaseModel | dict:
         """
-        Generic entry point.  kwargs are split automatically into
-        path params, query params, and body per the endpoint definition.
+        Generic entry point. ``endpoint`` is the TMDB path template; kwargs are
+        split automatically into path params, query params, and body per the
+        endpoint definition.
 
         Usage:
-            await client.request("account.lists", account_object_id="abc", page=2)
-            await client.request("list.create", name="My List", description="...")
+            await client.request("/3/movie/{movie_id}", movie_id=550)
+            await client.request("/4/account/{account_object_id}/lists", account_object_id="abc", page=2)
+            await client.request("/4/list", method="post", name="My List", iso_639_1="en")
         """
         ep = self._get_endpoint(endpoint, method)
         path_params, query_params, body_params = self._split_params(ep, kwargs)
@@ -57,7 +59,7 @@ class AsyncTMDB(TMDBClientBase):
 
 class TMDB(TMDBClientBase):
 
-    def __init__(self, access_token: str, cache_dir: Path, cache_ttl: float, timeout: float = 10.0):
+    def __init__(self, access_token: str, cache_dir: str | Path, cache_ttl: float, timeout: float = 10.0):
         super().__init__(access_token)
         self._http  = httpx.Client(timeout=timeout, headers=self._headers())
         self.cache = SyncCacheManager(cache_dir, cache_ttl)
