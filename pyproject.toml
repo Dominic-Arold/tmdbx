@@ -13,6 +13,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "datamodel-code-generator[ruff]>=0.54.1",
+    "pytest>=9.0.2",
 ]
 
 [tool.datamodel-codegen]
